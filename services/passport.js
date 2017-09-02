@@ -12,7 +12,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-    User.findById(user.id).then( (user) => {
+    User.findById(user.id).then((user) => {
         done(null, user);
     });
 });
@@ -21,23 +21,19 @@ passport.use(new GoogleStrategy(
     {
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
-        callbackURL: '/google/callback',
+        callbackURL: '/auth/google/callback',
         proxy: true
 
     },
-    (accessToken, refreshToken, profile, done) => {
-        User.findOne({ googleId: profile.id })
-            .then((existingUser) => {
-                if (existingUser) {
-                        done(null, existingUser);
-                }
-                else {
-                    new User({ googleId: profile.id }).save()
-                    .then( user =>{
-                        done(null, user);
-                    });
-                }
-            });
-
+    async (accessToken, refreshToken, profile, done) => {
+        const existingUser = User.findOne({ googleId: profile.id });
+        if (existingUser) {
+            done(null, existingUser);
+        }
+        else {
+            const user = new User({ googleId: profile.id }).save();
+            done(null, user);
+        }
     }
-));
+)
+);
