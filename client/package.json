@@ -5,6 +5,9 @@
   "proxy": {
     "/auth/google": {
       "target": "http://localhost:5000"
+    },
+    "/api/current_user": {
+      "target": "http://localhost:5000"
     }
   },
   "dependencies": {
